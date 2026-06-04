@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useApp } from '../../context/AppContext'
 import './Auth.css'
 
 export default function Login() {
   const navigate = useNavigate()
+  const { login } = useApp()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,9 +20,11 @@ export default function Login() {
     }
   }, [error])
 
-  const handleSignIn = () => {
+  const handleSignIn = async () => {
     if (!email.includes('@')) { setError('Please enter a valid email address.'); return }
     if (password.length < 6)  { setError('Password must be at least 6 characters.'); return }
+    const result = await login(email, password)
+    if (result.error) { setError(result.error); return }
     navigate('/feed')
   }
 

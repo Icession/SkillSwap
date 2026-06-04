@@ -548,3 +548,13 @@ body {
 
   .slot-row { flex-wrap: wrap; gap: 6px; }
 }
+
+.demo-hint {
+  background: #EAF4EF;
+  border: 0.5px solid #C8E6D8;
+  color: #1A5C48;
+  font-size: 12.5px;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin-bottom: 14px;
+}

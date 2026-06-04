@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useApp } from '../../context/AppContext'
 import './Auth.css'
 
 const DAYS  = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
@@ -12,10 +13,12 @@ const createSlot = (id) => ({ id, from: '9:00 AM', to: '5:00 PM', enabled: true 
 
 export default function RegisterAvailability() {
   const navigate = useNavigate()
+  const { register } = useApp()
 
   const [selectedDays, setSelectedDays] = useState(['Mo', 'Tu', 'We', 'Th', 'Fr'])
   const [slots, setSlots] = useState([createSlot(1), createSlot(2)])
   const [hours, setHours] = useState(2)
+  const [error, setError] = useState('')
 
   const isFormValid = selectedDays.length > 0 && slots.some((s) => s.enabled)
 
@@ -26,10 +29,6 @@ export default function RegisterAvailability() {
           .map((s) => `${s.from} – ${s.to}`)
           .join(' and ')}`
       : ''
-
-  useEffect(() => {
-    console.log('Availability updated:', { selectedDays, slots })
-  }, [selectedDays, slots])
 
   const toggleDay  = (day) =>
     setSelectedDays((prev) =>
@@ -48,12 +47,30 @@ export default function RegisterAvailability() {
   const removeSlot = (id) =>
     setSlots((prev) => prev.filter((s) => s.id !== id))
 
-  const handleFinish = () => {
-    sessionStorage.setItem(
-      'register_step3',
-      JSON.stringify({ selectedDays, slots: slots.filter((s) => s.enabled), hours })
-    )
-    navigate('/login')
+  const handleFinish = async () => {
+    // Assemble the data captured across all 3 registration steps.
+    const step1 = JSON.parse(sessionStorage.getItem('register_step1') || '{}')
+    const step2 = JSON.parse(sessionStorage.getItem('register_step2') || '{}')
+
+    const result = await register({
+      firstName: step1.firstName,
+      lastName: step1.lastName,
+      email: step1.email,
+      password: step1.password,
+      location: step1.location,
+      offering: step2.offering || [],
+      wanting: step2.wanting || [],
+      availability: selectedDays.length >= 6 ? 'Available Now'
+        : selectedDays.every((d) => ['Sa', 'Su'].includes(d)) ? 'Weekends' : 'Weekdays',
+      hours,
+      slots: slots.filter((s) => s.enabled),
+    })
+
+    if (result.error) { setError(result.error); return }
+
+    sessionStorage.removeItem('register_step1')
+    sessionStorage.removeItem('register_step2')
+    navigate('/feed')   // register() logs the new user in automatically
   }
 
   return (
@@ -95,6 +112,7 @@ export default function RegisterAvailability() {
 
         <h1>Availability</h1>
         <p className="auth-sub">Let others know when you're free to swap skills</p>
+        {error && <div className="error-msg">{error}</div>}
 
         <label>Which days are you available?</label>
         <div className="day-row">

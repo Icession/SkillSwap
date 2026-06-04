@@ -1,3 +1,16 @@
+export const SKILL_CATEGORIES = {
+  'UI Design': 'Design', 'UI/UX Design': 'Design', 'Figma': 'Design',
+  'Figma Prototyping': 'Design', 'Illustration': 'Arts', 'Photography': 'Arts',
+  'Photography basics': 'Arts', 'Painting': 'Arts', 'Calligraphy': 'Arts',
+  'Drawing': 'Arts', 'React': 'Technology', 'Python': 'Technology',
+  'Java': 'Technology', 'Video Editing': 'Technology', 'Data Analyst': 'Business',
+  'Data Analysis': 'Business', 'Excel': 'Business', 'MS Excel': 'Business',
+  'Finance': 'Business', 'Accounting': 'Business', 'Statistics': 'Business',
+  'Spanish': 'Language', 'Japanese': 'Language', 'Copywriting': 'Business',
+}
+
+export const getCategory = (skill) => SKILL_CATEGORIES[skill] || 'Other'
+
 export const USERS = [
   {
     id: 1,
@@ -8,8 +21,11 @@ export const USERS = [
     joined: 'Jan 2025',
     offer: ['UI Design', 'Figma'],
     want: ['Painting', 'Photography'],
+    offerLevels: { 'UI Design': 'Advanced', 'Figma': 'Advanced' },
+    wantLevels: { 'Painting': 'Beginner', 'Photography': 'Beginner' },
     availability: 'Available Now',
     color: '#298C6E',
+    level: 'Advance',
     swaps: 8,
     rating: 4.8,
     bio: 'UI designer with 3 years of experience. Love creating clean interfaces and want to explore creative arts on the side.',
@@ -27,8 +43,11 @@ export const USERS = [
     joined: 'Feb 2025',
     offer: ['Java', 'Python'],
     want: ['Data Analyst', 'Excel'],
+    offerLevels: { 'Java': 'Advanced', 'Python': 'Intermediate' },
+    wantLevels: { 'Data Analyst': 'Beginner', 'Excel': 'Beginner' },
     availability: 'Available Now',
     color: '#298C6E',
+    level: 'Intermediate',
     swaps: 5,
     rating: 4.6,
     bio: 'Backend developer looking to expand into data analysis. Happy to trade programming knowledge.',
@@ -45,8 +64,11 @@ export const USERS = [
     joined: 'Mar 2025',
     offer: ['Calligraphy', 'Drawing'],
     want: ['MS Excel', 'Data Analysis'],
+    offerLevels: { 'Calligraphy': 'Advanced', 'Drawing': 'Intermediate' },
+    wantLevels: { 'MS Excel': 'Beginner', 'Data Analysis': 'Beginner' },
     availability: 'Weekdays',
     color: '#298C6E',
+    level: 'Beginner',
     swaps: 3,
     rating: 4.9,
     bio: 'Professional calligrapher wanting to learn more about spreadsheets and data for my small business.',
@@ -63,8 +85,11 @@ export const USERS = [
     joined: 'Jan 2025',
     offer: ['Statistics', 'Finance'],
     want: ['Finance', 'Accounting'],
+    offerLevels: { 'Statistics': 'Advanced', 'Finance': 'Intermediate' },
+    wantLevels: { 'Finance': 'Beginner', 'Accounting': 'Beginner' },
     availability: 'Weekends',
     color: '#298C6E',
+    level: 'Advance',
     swaps: 12,
     rating: 4.7,
     bio: 'Stats professional who loves teaching numbers and wants to grow in finance.',
@@ -81,8 +106,11 @@ export const USERS = [
     joined: 'Aug 2025',
     offer: ['UI/UX Design', 'Figma Prototyping', 'Illustration'],
     want: ['Photography basics', 'Calligraphy'],
+    offerLevels: { 'UI/UX Design': 'Advanced', 'Figma Prototyping': 'Advanced', 'Illustration': 'Intermediate' },
+    wantLevels: { 'Photography basics': 'Beginner', 'Calligraphy': 'Beginner' },
     availability: 'Available Now',
     color: '#298C6E',
+    level: 'Intermediate',
     swaps: 12,
     rating: 4.5,
     bio: 'BSIT student passionate about design and user experience. I\'ve been using Figma for 4 years and love helping others learn it. Looking to build my tech skills — especially Photography and Calligraphy — through skills exchange.',
@@ -91,12 +119,4 @@ export const USERS = [
       { initials: 'AM', name: 'Amelia M.', rating: 5, text: 'Great experience swapping skills. Very reliable and organized. Would swap again.',                                date: 'Feb 28' },
     ],
   },
-]
-
-export const SWAP_REQUESTS = [
-  { id: 1, requester: 'Aaron M.',   exchange: 'UI Design ↔ Calligraphy',      status: 'Pending', date: 'Mar 24' },
-  { id: 2, requester: 'Sarah F.',   exchange: 'Programming ↔ Painting',       status: 'Active',  date: 'Mar 12' },
-  { id: 3, requester: 'Emily R.',   exchange: 'Drawing ↔ Painting',           status: 'Done',    date: 'Mar 10' },
-  { id: 4, requester: 'Jasper L.',  exchange: 'English ↔ Spanish',            status: 'Done',    date: 'Mar 16' },
-  { id: 5, requester: 'Francis P.', exchange: 'Video editing ↔ Excel',        status: 'Active',  date: 'Mar 9'  },
 ]

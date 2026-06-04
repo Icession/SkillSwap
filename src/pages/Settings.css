@@ -1,0 +1,200 @@
+.set-page { min-height: 100vh; background: #F7F4EE; }
+
+.set-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+
+.set-heading { font-size: 24px; font-weight: 700; color: #1F2D27; margin: 0; }
+.set-sub { font-size: 14px; color: #8AA09A; margin: 6px 0 24px; }
+
+.set-card {
+  background: #fff;
+  border: 0.5px solid #D5E4DF;
+  border-radius: 16px;
+  padding: 22px;
+  margin-bottom: 18px;
+}
+
+.set-card-lbl {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8AA09A;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.set-avatar-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+.set-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.set-avatar-meta { font-size: 13px; color: #8AA09A; }
+
+.set-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: #1F2D27;
+  margin-bottom: 6px;
+}
+
+.set-input, .set-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 0.5px solid #D5E4DF;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: #1F2D27;
+  outline: none;
+  margin-bottom: 16px;
+  font-family: inherit;
+}
+.set-input:focus, .set-textarea:focus { border-color: #298C6E; }
+.set-textarea { resize: vertical; margin-bottom: 0; }
+
+.set-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.set-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 5px 8px 5px 12px;
+  border-radius: 18px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.set-chip-offer { background: #C8E6D8; color: #1A5C48; }
+.set-chip-want  { background: #FCE9D2; color: #B26B16; }
+.set-chip-empty { font-size: 13px; color: #8AA09A; }
+
+.set-chip-x {
+  cursor: pointer;
+  opacity: 0.6;
+  font-size: 11px;
+}
+.set-chip-x:hover { opacity: 1; }
+
+.set-add-row { display: flex; gap: 8px; }
+.set-add-row input {
+  flex: 1;
+  border: 0.5px solid #D5E4DF;
+  border-radius: 10px;
+  padding: 9px 12px;
+  font-size: 13px;
+  outline: none;
+  font-family: inherit;
+}
+.set-add-row input:focus { border-color: #298C6E; }
+.set-add-row button {
+  background: #EAF4EF;
+  color: #1A5C48;
+  border: none;
+  border-radius: 10px;
+  padding: 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.set-add-row button:hover { background: #C8E6D8; }
+
+.set-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.set-save {
+  background: #298C6E;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.set-save:hover { background: #21795E; }
+
+.set-view {
+  background: #fff;
+  color: #1F2D27;
+  border: 0.5px solid #D5E4DF;
+  border-radius: 10px;
+  padding: 11px 20px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.set-view:hover { background: #F7F4EE; }
+
+.set-logout {
+  background: none;
+  color: #C0392B;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  margin-left: auto;
+}
+.set-logout:hover { text-decoration: underline; }
+
+.set-skill-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 0.5px solid #EEF3F1;
+}
+.set-skill-row:last-of-type { border-bottom: none; }
+
+.set-skill-name {
+  flex: 1;
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 16px;
+  display: inline-block;
+}
+.set-skill-offer { background: #C8E6D8; color: #1A5C48; }
+.set-skill-want  { background: #FCE9D2; color: #B26B16; }
+
+.set-level-select {
+  border: 0.5px solid #D5E4DF;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  color: #1F2D27;
+  background: #fff;
+  outline: none;
+  cursor: pointer;
+  font-family: inherit;
+}
+.set-level-select:focus { border-color: #298C6E; }
+
+.set-skill-x {
+  cursor: pointer;
+  color: #8AA09A;
+  font-size: 12px;
+  padding: 4px 6px;
+}
+.set-skill-x:hover { color: #C0392B; }

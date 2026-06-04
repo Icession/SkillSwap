@@ -1,0 +1,188 @@
+.swp-page {
+  min-height: 100vh;
+  background: #F7F4EE;
+}
+
+.swp-wrap {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 32px 24px 60px;
+}
+
+.swp-heading {
+  font-size: 24px;
+  font-weight: 700;
+  color: #1F2D27;
+  margin: 0;
+}
+
+.swp-sub {
+  font-size: 14px;
+  color: #8AA09A;
+  margin: 6px 0 28px;
+}
+
+.swp-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2D27;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+
+.swp-badge {
+  background: #F4A44A;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 12px;
+  padding: 1px 9px;
+}
+
+.swp-incoming { margin-bottom: 32px; }
+
+.swp-incoming-card,
+.swp-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  border: 0.5px solid #D5E4DF;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.swp-incoming-card { border-color: #F4D6AE; background: #FFFDF9; }
+
+.swp-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.swp-incoming-info, .swp-card-body { flex: 1; min-width: 0; }
+
+.swp-incoming-name, .swp-card-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1F2D27;
+}
+
+.swp-card-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.swp-exchange {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 6px;
+}
+
+.swp-chip {
+  padding: 4px 11px;
+  border-radius: 16px;
+  font-size: 12.5px;
+  font-weight: 500;
+}
+.swp-chip-offer { background: #C8E6D8; color: #1A5C48; }
+.swp-chip-want  { background: #FCE9D2; color: #B26B16; }
+.swp-arrow { color: #8AA09A; font-size: 13px; }
+.swp-direction { font-size: 12px; color: #8AA09A; margin-left: 4px; }
+
+.swp-status {
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 12px;
+}
+.swp-pending  { background: #FCE9D2; color: #B26B16; }
+.swp-active   { background: #C8E6D8; color: #1A5C48; }
+.swp-done     { background: #E3E8E6; color: #5C6B66; }
+.swp-declined { background: #FCEBEB; color: #C0392B; }
+
+.swp-incoming-actions, .swp-card-actions {
+  display: flex;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.swp-btn-accept, .swp-btn-decline, .swp-btn-done, .swp-btn-msg {
+  border: none;
+  border-radius: 9px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.swp-btn-accept { background: #298C6E; color: #fff; }
+.swp-btn-accept:hover { background: #21795E; }
+.swp-btn-decline { background: #F7F4EE; color: #C0392B; }
+.swp-btn-decline:hover { background: #FCEBEB; }
+.swp-btn-done { background: #298C6E; color: #fff; }
+.swp-btn-done:hover { background: #21795E; }
+.swp-btn-msg { background: #F7F4EE; color: #1F2D27; }
+.swp-btn-msg:hover { background: #EEF3F1; }
+
+.swp-filter-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.swp-filter {
+  font-size: 13px;
+  color: #8AA09A;
+  padding: 6px 14px;
+  border-radius: 18px;
+  background: #fff;
+  border: 0.5px solid #D5E4DF;
+  cursor: pointer;
+}
+.swp-filter-active { background: #298C6E; color: #fff; border-color: #298C6E; }
+
+.swp-empty {
+  background: #fff;
+  border: 0.5px dashed #D5E4DF;
+  border-radius: 14px;
+  padding: 40px 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #8AA09A;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.swp-empty-btn {
+  background: #298C6E;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+.swp-empty-btn:hover { background: #21795E; }
+
+@media (max-width: 640px) {
+  .swp-incoming-card, .swp-card { flex-wrap: wrap; }
+  .swp-incoming-actions, .swp-card-actions { width: 100%; }
+}

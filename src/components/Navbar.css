@@ -178,10 +178,22 @@
 }
 
 .nav-dropdown-icon {
-  font-size: 15px;
-  width: 20px;
-  text-align: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
+  color: #5C6B66;
+}
+
+.nav-dropdown-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.nav-dropdown-logout .nav-dropdown-icon {
+  color: inherit;
 }
 
 .nav-dropdown-logout {
@@ -195,4 +207,19 @@
 @media (max-width: 640px) {
   .nav-links { display: none; }
   .navbar { padding: 0 16px; }
+}
+.nav-link { position: relative; display: inline-flex; align-items: center; gap: 6px; }
+
+.nav-link-badge {
+  background: #F4A44A;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 10px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

@@ -236,3 +236,12 @@
   .dash-sidebar { display: none; }
   .dash-stats { grid-template-columns: 1fr; }
 }
+.dash-empty {
+  background: #fff;
+  border: 0.5px dashed #D5E4DF;
+  border-radius: 12px;
+  padding: 40px 24px;
+  text-align: center;
+  font-size: 14px;
+  color: #8AA09A;
+}
