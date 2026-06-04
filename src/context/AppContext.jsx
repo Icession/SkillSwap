@@ -58,6 +58,16 @@ const mapMessage = (r) => ({
   createdAt: r.created_at,
 })
 
+const mapReview = (r) => ({
+  id: r.id,
+  swapId: r.swap_id,
+  reviewerId: r.reviewer_id,
+  revieweeId: r.reviewee_id,
+  rating: r.rating,
+  comment: r.comment || '',
+  createdAt: r.created_at,
+})
+
 export function AppProvider({ children }) {
   const [session, setSession] = useState(null)
   const [sessionChecked, setSessionChecked] = useState(false)
@@ -65,6 +75,7 @@ export function AppProvider({ children }) {
   const [users, setUsers] = useState([])
   const [swaps, setSwaps] = useState([])
   const [messages, setMessages] = useState([])
+  const [reviews, setReviews] = useState([])
   const [loading, setLoading] = useState(true)
 
   const userId = session?.user?.id || null
@@ -80,6 +91,13 @@ export function AppProvider({ children }) {
     const { data, error } = await supabase.from('profiles').select('*')
     if (error) console.error('loadUsers', error)
     setUsers((data || []).map(mapProfile))
+  }, [])
+
+  const loadReviews = useCallback(async () => {
+    const { data, error } = await supabase
+      .from('reviews').select('*').order('created_at', { ascending: false })
+    if (error) console.error('loadReviews', error)
+    setReviews((data || []).map(mapReview))
   }, [])
 
   const loadSwapsAndMessages = useCallback(async (id) => {
@@ -130,16 +148,16 @@ export function AppProvider({ children }) {
       if (userId) {
         setLoading(true)
         await loadProfile(userId)
-        await Promise.all([loadUsers(), loadSwapsAndMessages(userId)])
+        await Promise.all([loadUsers(), loadSwapsAndMessages(userId), loadReviews()])
         if (!cancelled) setLoading(false)
       } else {
-        setCurrentUser(null); setUsers([]); setSwaps([]); setMessages([])
+        setCurrentUser(null); setUsers([]); setSwaps([]); setMessages([]); setReviews([])
         setLoading(false)
       }
     }
     run()
     return () => { cancelled = true }
-  }, [sessionChecked, userId, loadProfile, loadUsers, loadSwapsAndMessages])
+  }, [sessionChecked, userId, loadProfile, loadUsers, loadSwapsAndMessages, loadReviews])
 
   // 3) Realtime — keep data fresh without a manual refresh. When swaps,
   //    messages, or profiles change in the database, re-fetch the affected
@@ -155,9 +173,11 @@ export function AppProvider({ children }) {
         () => loadSwapsAndMessages(userId))
       .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' },
         () => loadUsers())
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'reviews' },
+        () => loadReviews())
       .subscribe()
     return () => { supabase.removeChannel(channel) }
-  }, [userId, loadSwapsAndMessages, loadUsers])
+  }, [userId, loadSwapsAndMessages, loadUsers, loadReviews])
 
   // ---- Auth ----
   const login = useCallback(async (email, password) => {
@@ -209,6 +229,7 @@ export function AppProvider({ children }) {
     setUsers([])
     setSwaps([])
     setMessages([])
+    setReviews([])
     await supabase.auth.signOut()
   }, [])
 
@@ -229,6 +250,7 @@ export function AppProvider({ children }) {
     setUsers([])
     setSwaps([])
     setMessages([])
+    setReviews([])
     return { ok: true }
   }, [])
 
@@ -295,19 +317,71 @@ export function AppProvider({ children }) {
     refreshSwaps()
   }, [userId, refreshSwaps])
 
+  // ---- Reviews ----
+  const createReview = useCallback(async ({ swapId, revieweeId, rating, comment }) => {
+    if (!userId) return { error: 'You need to be signed in.' }
+    const { error } = await supabase.from('reviews').insert({
+      swap_id: swapId,
+      reviewer_id: userId,
+      reviewee_id: revieweeId,
+      rating,
+      comment: comment?.trim() || null,
+    })
+    if (error) { console.error('createReview', error); return { error: error.message } }
+    // Refresh reviews + profiles (the DB trigger updates the reviewee's rating).
+    await Promise.all([loadReviews(), loadUsers()])
+    return { ok: true }
+  }, [userId, loadReviews, loadUsers])
+
   // ---- Derived ----
   const getUser = useCallback(
     (id) => users.find((u) => String(u.id) === String(id)) || null,
     [users]
   )
+
+  // Reviews written *about* a given user, enriched with the reviewer's
+  // name/initials/color and a friendly date — matches what Profile renders.
+  const getReviews = useCallback(
+    (id) =>
+      reviews
+        .filter((r) => String(r.revieweeId) === String(id))
+        .map((r) => {
+          const reviewer = users.find((u) => String(u.id) === String(r.reviewerId))
+          return {
+            id: r.id,
+            rating: r.rating,
+            text: r.comment,
+            name: reviewer?.name || 'SkillSwap member',
+            initials: reviewer?.initials || '??',
+            color: reviewer?.color || '#298C6E',
+            date: r.createdAt
+              ? new Date(r.createdAt).toLocaleDateString('en-US', {
+                  month: 'short', day: 'numeric', year: 'numeric',
+                })
+              : '',
+          }
+        }),
+    [reviews, users]
+  )
+
+  // Has the current user already reviewed this swap?
+  const hasReviewed = useCallback(
+    (swapId) =>
+      reviews.some(
+        (r) => String(r.swapId) === String(swapId) && String(r.reviewerId) === String(userId)
+      ),
+    [reviews, userId]
+  )
+
   const mySwaps = swaps
   const pendingIncoming = swaps.filter((s) => s.recipientId === userId && s.status === 'Pending').length
   const unreadCount = messages.filter((m) => m.senderId !== userId && !m.read).length
 
   const value = {
-    currentUser, users, swaps, messages, mySwaps, pendingIncoming, unreadCount, loading,
+    currentUser, users, swaps, messages, reviews, mySwaps, pendingIncoming, unreadCount, loading,
     login, register, logout, updateProfile, changePassword, deleteAccount,
     createSwap, updateSwapStatus, sendMessage, markSwapRead, getUser,
+    createReview, getReviews, hasReviewed,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

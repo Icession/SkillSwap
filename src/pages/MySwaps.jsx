@@ -8,8 +8,9 @@ const FILTERS = ['All', 'Pending', 'Active', 'Done']
 
 export default function MySwaps() {
   const navigate = useNavigate()
-  const { mySwaps, currentUser, getUser, updateSwapStatus } = useApp()
+  const { mySwaps, currentUser, getUser, updateSwapStatus, createReview, hasReviewed } = useApp()
   const [filter, setFilter] = useState('All')
+  const [reviewing, setReviewing] = useState(null) // { swap, other }
 
   const incoming = mySwaps.filter(
     (s) => s.recipientId === currentUser.id && s.status === 'Pending'
@@ -105,12 +106,99 @@ export default function MySwaps() {
                     {(swap.status === 'Active' || swap.status === 'Pending') && (
                       <button className="swp-btn-msg" onClick={() => navigate('/messages')}>Message</button>
                     )}
+                    {swap.status === 'Done' && (
+                      hasReviewed(swap.id)
+                        ? <span className="swp-reviewed">★ Reviewed</span>
+                        : <button className="swp-btn-review" onClick={() => setReviewing({ swap, other })}>Leave a review</button>
+                    )}
                   </div>
                 </div>
               )
             })}
           </div>
         )}
+      </div>
+
+      {reviewing && (
+        <ReviewModal
+          key={reviewing.swap.id}
+          other={reviewing.other}
+          onClose={() => setReviewing(null)}
+          onSubmit={(rating, comment) =>
+            createReview({
+              swapId: reviewing.swap.id,
+              revieweeId: reviewing.other.id,
+              rating,
+              comment,
+            })
+          }
+        />
+      )}
+    </div>
+  )
+}
+
+function ReviewModal({ other, onClose, onSubmit }) {
+  const [rating, setRating] = useState(5)
+  const [hover, setHover] = useState(0)
+  const [comment, setComment] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState('')
+
+  const submit = async () => {
+    setBusy(true)
+    setError('')
+    const res = await onSubmit(rating, comment)
+    setBusy(false)
+    if (res?.error) { setError(res.error); return }
+    onClose()
+  }
+
+  const firstName = other?.name?.split(' ')[0] || 'them'
+
+  return (
+    <div className="swp-modal-overlay" onClick={onClose}>
+      <div className="swp-modal" onClick={(e) => e.stopPropagation()}>
+        <div className="swp-modal-head">
+          <div className="swp-modal-avatar" style={{ background: other?.color }}>{other?.initials}</div>
+          <div>
+            <h3 className="swp-modal-title">Review {other?.name}</h3>
+            <p className="swp-modal-sub">How was your skill swap?</p>
+          </div>
+        </div>
+
+        <div className="swp-stars" role="radiogroup" aria-label="Rating">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <button
+              key={n}
+              type="button"
+              className={`swp-star ${n <= (hover || rating) ? 'on' : ''}`}
+              onMouseEnter={() => setHover(n)}
+              onMouseLeave={() => setHover(0)}
+              onClick={() => setRating(n)}
+              aria-label={`${n} star${n > 1 ? 's' : ''}`}
+            >★</button>
+          ))}
+          <span className="swp-stars-label">{rating} / 5</span>
+        </div>
+
+        <textarea
+          className="swp-review-text"
+          placeholder={`Share a few words about swapping with ${firstName}…`}
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          rows={4}
+          maxLength={400}
+        />
+
+        {error && <p className="swp-review-error">{error}</p>}
+
+        <div className="swp-modal-actions">
+          <button className="swp-modal-cancel" onClick={onClose} disabled={busy}>Cancel</button>
+          <button className="swp-modal-submit" onClick={submit} disabled={busy}>
+            {busy ? 'Posting…' : 'Post review'}
+          </button>
+        </div>
       </div>
     </div>
   )

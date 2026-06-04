@@ -8,9 +8,10 @@ import './Profile.css'
 export default function Profile() {
   const { id } = useParams()
   const navigate = useNavigate()
-  const { getUser, currentUser, createSwap, swaps } = useApp()
+  const { getUser, currentUser, createSwap, swaps, getReviews } = useApp()
 
   const user = getUser(id)
+  const reviews = user ? getReviews(user.id) : []
   const isOwnProfile = currentUser && String(currentUser.id) === String(id)
 
   const [modalOpen, setModalOpen] = useState(false)
@@ -22,6 +23,7 @@ export default function Profile() {
 
   if (!user) return null
 
+  // Has the current user already sent this person a pending/active request?
   const existing = swaps.find(
     (s) => s.requesterId === currentUser?.id && String(s.recipientId) === String(user.id) &&
       (s.status === 'Pending' || s.status === 'Active')
@@ -33,6 +35,7 @@ export default function Profile() {
     setJustSent(true)
   }
 
+  // Real per-skill levels (fall back to a sensible default if missing).
   const offerLevel = (skill) => user.offerLevels?.[skill] ?? 'Intermediate'
   const wantLevel  = (skill) => user.wantLevels?.[skill] ?? 'Any level'
 
@@ -130,18 +133,20 @@ export default function Profile() {
           </div>
 
           <div className="profile-card">
-            <div className="profile-card-lbl">Reviews</div>
-            {user.reviews.length === 0 ? (
+            <div className="profile-card-lbl">
+              Reviews{reviews.length > 0 && <span className="review-count"> · {reviews.length}</span>}
+            </div>
+            {reviews.length === 0 ? (
               <p className="profile-bio">No reviews yet.</p>
-            ) : user.reviews.map((review, i) => (
-              <div key={i} className="review-item">
+            ) : reviews.map((review) => (
+              <div key={review.id} className="review-item">
                 <div className="review-top">
-                  <div className="review-avatar">{review.initials}</div>
+                  <div className="review-avatar" style={{ background: review.color }}>{review.initials}</div>
                   <span className="review-name">{review.name}</span>
-                  <span className="review-stars">{'★'.repeat(review.rating)}</span>
+                  <span className="review-stars">{'★'.repeat(review.rating)}<span className="review-stars-dim">{'★'.repeat(5 - review.rating)}</span></span>
                   <span className="review-date">{review.date}</span>
                 </div>
-                <p className="review-text">{review.text}</p>
+                {review.text && <p className="review-text">{review.text}</p>}
               </div>
             ))}
           </div>

@@ -274,3 +274,11 @@
   .profile-sidebar { border-right: none; border-bottom: 0.5px solid #D5E4DF; }
   .profile-want-grid { grid-template-columns: 1fr; }
 }
+.review-count {
+  color: #8AA09A;
+  font-weight: 600;
+}
+
+.review-stars-dim {
+  color: #E2D9CC;
+}

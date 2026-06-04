@@ -8,12 +8,26 @@ export default function Messages() {
   const navigate = useNavigate()
   const { mySwaps, messages, currentUser, getUser, sendMessage, markSwapRead } = useApp()
 
+  // Conversations = swaps you're part of, minus declined ones. We also hide
+  // swaps that are finished AND were never messaged, so empty "Done" threads
+  // don't pile up. Open swaps (Pending/Active) always show so you can start
+  // chatting, and any swap with a real conversation is kept as history.
   const conversations = useMemo(
-    () => mySwaps.filter((s) => s.status !== 'Declined'),
-    [mySwaps]
+    () =>
+      mySwaps.filter((s) => {
+        if (s.status === 'Declined') return false
+        const hasMessages = messages.some((m) => m.swapId === s.id)
+        return s.status === 'Pending' || s.status === 'Active' || hasMessages
+      }),
+    [mySwaps, messages]
   )
 
-  const [activeId, setActiveId] = useState(conversations[0]?.id || null)
+  const [selectedId, setSelectedId] = useState(null)
+  // Derive the active conversation during render (no effect needed): use the
+  // user's pick if it's still visible, otherwise fall back to the first one.
+  const activeId = conversations.some((s) => s.id === selectedId)
+    ? selectedId
+    : conversations[0]?.id || null
   const [draft, setDraft] = useState('')
   const threadRef = useRef(null)
 
@@ -71,7 +85,7 @@ export default function Messages() {
                   <div
                     key={swap.id}
                     className={`msg-list-item ${swap.id === activeId ? 'msg-list-active' : ''}`}
-                    onClick={() => setActiveId(swap.id)}
+                    onClick={() => setSelectedId(swap.id)}
                   >
                     <div className="msg-list-avatar" style={{ background: o?.color }}>{o?.initials}</div>
                     <div className="msg-list-info">
