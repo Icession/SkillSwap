@@ -15,7 +15,7 @@ const COLORS = [
 
 export default function Settings() {
   const navigate = useNavigate()
-  const { currentUser, updateProfile, logout, changePassword } = useApp()
+  const { currentUser, updateProfile, logout, changePassword, deleteAccount } = useApp()
 
   const [form, setForm] = useState({
     name: currentUser.name,
@@ -40,6 +40,12 @@ export default function Settings() {
   const [pwMsg, setPwMsg]   = useState(null)
   const [pwBusy, setPwBusy] = useState(false)
   const [showPw, setShowPw] = useState(false)
+
+  // delete account
+  const [confirmDelete, setConfirmDelete] = useState(false)
+  const [delText, setDelText] = useState('')
+  const [delBusy, setDelBusy] = useState(false)
+  const [delErr, setDelErr] = useState(null)
 
   const set = (field, value) => { setForm((f) => ({ ...f, [field]: value })); setSaved(false) }
 
@@ -85,6 +91,15 @@ export default function Settings() {
     setPwBusy(false)
     if (res?.error) setPwMsg({ type: 'error', text: res.error })
     else { setPwMsg({ type: 'ok', text: 'Password updated ✓' }); setPw(''); setPw2('') }
+  }
+
+  const handleDelete = async () => {
+    if (delText !== 'DELETE') return
+    setDelBusy(true); setDelErr(null)
+    const res = await deleteAccount()
+    setDelBusy(false)
+    if (res?.error) { setDelErr(res.error); return }
+    navigate('/')
   }
 
   return (
@@ -218,6 +233,35 @@ export default function Settings() {
           <button className="set-pw-btn" onClick={handlePassword} disabled={pwBusy}>
             {pwBusy ? 'Updating…' : 'Update password'}
           </button>
+        </div>
+
+        <div className="set-card set-danger">
+          <div className="set-card-lbl set-danger-lbl">Danger zone</div>
+          <p className="set-danger-text">
+            Permanently delete your account, profile, swaps, and messages. This cannot be undone.
+          </p>
+          {!confirmDelete ? (
+            <button className="set-danger-btn" onClick={() => setConfirmDelete(true)}>Delete account</button>
+          ) : (
+            <div className="set-danger-confirm">
+              <label className="set-label">Type <strong>DELETE</strong> to confirm</label>
+              <input
+                className="set-input"
+                value={delText}
+                onChange={(e) => { setDelText(e.target.value); setDelErr(null) }}
+                placeholder="DELETE"
+              />
+              {delErr && <div className="set-msg set-msg-error">{delErr}</div>}
+              <div className="set-danger-actions">
+                <button className="set-cancel" onClick={() => { setConfirmDelete(false); setDelText(''); setDelErr(null) }}>
+                  Cancel
+                </button>
+                <button className="set-danger-btn" disabled={delText !== 'DELETE' || delBusy} onClick={handleDelete}>
+                  {delBusy ? 'Deleting…' : 'Delete my account permanently'}
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="set-actions">

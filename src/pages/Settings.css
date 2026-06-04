@@ -244,3 +244,21 @@ select.set-input { background: #fff; cursor: pointer; }
 @media (max-width: 600px) {
   .set-pw-grid { grid-template-columns: 1fr; gap: 0; }
 }
+
+/* ---- danger zone ---- */
+.set-danger { border-color: #E7C3BD; }
+.set-danger-lbl { color: #C0392B; }
+.set-danger-text { font-size: 13.5px; color: #8A5A52; margin: 0 0 16px; line-height: 1.5; }
+.set-danger-btn {
+  background: #C0392B; color: #fff; border: none; border-radius: 10px;
+  padding: 11px 20px; font-size: 14px; font-weight: 600; cursor: pointer;
+  font-family: inherit; transition: background 0.15s;
+}
+.set-danger-btn:hover { background: #A93226; }
+.set-danger-btn:disabled { opacity: 0.55; cursor: default; }
+.set-danger-actions { display: flex; gap: 10px; margin-top: 6px; flex-wrap: wrap; }
+.set-cancel {
+  background: #fff; color: #1F2D27; border: 0.5px solid #D5E4DF; border-radius: 10px;
+  padding: 11px 18px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.set-cancel:hover { background: #F2EFE8; }

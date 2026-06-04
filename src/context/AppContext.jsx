@@ -218,6 +218,20 @@ export function AppProvider({ children }) {
     return { ok: true }
   }, [])
 
+  const deleteAccount = useCallback(async () => {
+    // Calls a secure Postgres function (see supabase/delete_user.sql) that
+    // deletes only the caller's own account and data, then signs out.
+    const { error } = await supabase.rpc('delete_user')
+    if (error) return { error: error.message }
+    await supabase.auth.signOut()
+    setSession(null)
+    setCurrentUser(null)
+    setUsers([])
+    setSwaps([])
+    setMessages([])
+    return { ok: true }
+  }, [])
+
   // ---- Profile ----
   const updateProfile = useCallback(async (updates) => {
     if (!userId) return
@@ -292,7 +306,7 @@ export function AppProvider({ children }) {
 
   const value = {
     currentUser, users, swaps, messages, mySwaps, pendingIncoming, unreadCount, loading,
-    login, register, logout, updateProfile, changePassword,
+    login, register, logout, updateProfile, changePassword, deleteAccount,
     createSwap, updateSwapStatus, sendMessage, markSwapRead, getUser,
   }
 
