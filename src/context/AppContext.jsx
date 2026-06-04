@@ -141,6 +141,24 @@ export function AppProvider({ children }) {
     return () => { cancelled = true }
   }, [sessionChecked, userId, loadProfile, loadUsers, loadSwapsAndMessages])
 
+  // 3) Realtime — keep data fresh without a manual refresh. When swaps,
+  //    messages, or profiles change in the database, re-fetch the affected
+  //    slice. Row-Level Security still applies, so we only receive changes
+  //    we're allowed to see.
+  useEffect(() => {
+    if (!userId) return
+    const channel = supabase
+      .channel('skillswap-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'swap_requests' },
+        () => loadSwapsAndMessages(userId))
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'messages' },
+        () => loadSwapsAndMessages(userId))
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'profiles' },
+        () => loadUsers())
+      .subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [userId, loadSwapsAndMessages, loadUsers])
+
   // ---- Auth ----
   const login = useCallback(async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password })
