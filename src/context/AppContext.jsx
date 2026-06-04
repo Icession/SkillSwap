@@ -183,7 +183,21 @@ export function AppProvider({ children }) {
   }, [])
 
   const logout = useCallback(async () => {
+    // Clear local state right away so pages don't briefly see a stale
+    // "logged in" state during the async sign-out (which caused logout to
+    // bounce through /feed and land on /login).
+    setSession(null)
+    setCurrentUser(null)
+    setUsers([])
+    setSwaps([])
+    setMessages([])
     await supabase.auth.signOut()
+  }, [])
+
+  const changePassword = useCallback(async (newPassword) => {
+    const { error } = await supabase.auth.updateUser({ password: newPassword })
+    if (error) return { error: error.message }
+    return { ok: true }
   }, [])
 
   // ---- Profile ----
@@ -203,6 +217,9 @@ export function AppProvider({ children }) {
     if (updates.want !== undefined)        row.want = updates.want
     if (updates.offerLevels !== undefined) row.offer_levels = updates.offerLevels
     if (updates.wantLevels !== undefined)  row.want_levels = updates.wantLevels
+    if (updates.availability !== undefined) row.availability = updates.availability
+    if (updates.hoursPerWeek !== undefined) row.hours_per_week = updates.hoursPerWeek
+    if (updates.avatarColor !== undefined)  row.avatar_color = updates.avatarColor
 
     const { data, error } = await supabase.from('profiles').update(row).eq('id', userId).select().single()
     if (error) { console.error('updateProfile', error); return }
@@ -257,7 +274,7 @@ export function AppProvider({ children }) {
 
   const value = {
     currentUser, users, swaps, messages, mySwaps, pendingIncoming, unreadCount, loading,
-    login, register, logout, updateProfile,
+    login, register, logout, updateProfile, changePassword,
     createSwap, updateSwapStatus, sendMessage, markSwapRead, getUser,
   }
 

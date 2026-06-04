@@ -70,6 +70,7 @@ export default function Navbar() {
       <div className="nav-right" ref={dropdownRef}>
         <div
           className={`nav-avatar ${dropdownOpen ? 'nav-avatar-active' : ''}`}
+          style={{ background: currentUser?.color }}
           onClick={() => setDropdownOpen((prev) => !prev)}
           title="Your account"
         >

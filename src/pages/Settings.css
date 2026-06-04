@@ -198,3 +198,49 @@
   padding: 4px 6px;
 }
 .set-skill-x:hover { color: #C0392B; }
+
+/* ---- avatar color swatches ---- */
+.set-swatches { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 2px; }
+.set-swatch {
+  width: 34px; height: 34px; border-radius: 50%; border: 2px solid transparent;
+  cursor: pointer; padding: 0; transition: transform 0.1s;
+}
+.set-swatch:hover { transform: scale(1.08); }
+.set-swatch.active { border-color: #1F2D27; box-shadow: 0 0 0 2px #fff inset; }
+
+/* ---- account / password ---- */
+.set-msg { font-size: 13.5px; margin: 2px 0 12px; }
+.set-msg-error { color: #C0392B; }
+.set-msg-ok { color: #1A7A52; }
+.set-pw-btn {
+  background: #298C6E; color: #fff; border: none; border-radius: 10px;
+  padding: 11px 20px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
+  transition: background 0.15s;
+}
+.set-pw-btn:hover { background: #21795E; }
+.set-pw-btn:disabled { opacity: 0.6; cursor: default; }
+
+/* selects use the same look as text inputs */
+select.set-input { background: #fff; cursor: pointer; }
+
+/* ---- custom avatar color picker ---- */
+.set-custom-row { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+.set-color-input {
+  width: 44px; height: 34px; padding: 2px; border: 0.5px solid #D5E4DF;
+  border-radius: 8px; background: #fff; cursor: pointer;
+}
+.set-color-input::-webkit-color-swatch-wrapper { padding: 0; }
+.set-color-input::-webkit-color-swatch { border: none; border-radius: 5px; }
+.set-custom-hint { font-size: 13px; color: #8AA09A; }
+
+/* ---- account / password (two-column, distinct layout) ---- */
+.set-account-hint { font-size: 13.5px; color: #8AA09A; margin: 0 0 18px; }
+.set-pw-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 16px; }
+.set-pw-show {
+  display: flex; align-items: center; gap: 8px; font-size: 13px; color: #5C6B66;
+  margin: 2px 0 16px; cursor: pointer; user-select: none;
+}
+.set-pw-show input { width: auto; margin: 0; }
+@media (max-width: 600px) {
+  .set-pw-grid { grid-template-columns: 1fr; gap: 0; }
+}

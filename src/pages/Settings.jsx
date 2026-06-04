@@ -6,10 +6,16 @@ import './Settings.css'
 
 const OFFER_LEVELS = ['Beginner', 'Intermediate', 'Advanced']
 const WANT_LEVELS  = ['Beginner', 'Intermediate', 'Advanced', 'Any level']
+const AVAILABILITY = ['Available Now', 'Busy this week', 'Away']
+const COLORS = [
+  '#298C6E', '#1F6F57', '#2F7D8C', '#3A6EA5', '#4F6BED', '#6C5CE7',
+  '#9C5C90', '#C0392B', '#D35400', '#E08A4B', '#B26B16', '#5A8F3C',
+  '#7A8C29', '#5D4037', '#566573', '#1F2D27',
+]
 
 export default function Settings() {
   const navigate = useNavigate()
-  const { currentUser, updateProfile, logout } = useApp()
+  const { currentUser, updateProfile, logout, changePassword } = useApp()
 
   const [form, setForm] = useState({
     name: currentUser.name,
@@ -17,6 +23,9 @@ export default function Settings() {
     location: currentUser.location,
     bio: currentUser.bio,
   })
+  const [availability, setAvailability] = useState(currentUser.availability || 'Available Now')
+  const [hours, setHours] = useState(currentUser.hoursPerWeek ?? '')
+  const [avatarColor, setAvatarColor] = useState(currentUser.color || '#298C6E')
   const [offer, setOffer] = useState(currentUser.offer)
   const [want, setWant]   = useState(currentUser.want)
   const [offerLevels, setOfferLevels] = useState(currentUser.offerLevels || {})
@@ -24,6 +33,13 @@ export default function Settings() {
   const [newOffer, setNewOffer] = useState('')
   const [newWant, setNewWant]   = useState('')
   const [saved, setSaved] = useState(false)
+
+  // password
+  const [pw, setPw]   = useState('')
+  const [pw2, setPw2] = useState('')
+  const [pwMsg, setPwMsg]   = useState(null)
+  const [pwBusy, setPwBusy] = useState(false)
+  const [showPw, setShowPw] = useState(false)
 
   const set = (field, value) => { setForm((f) => ({ ...f, [field]: value })); setSaved(false) }
 
@@ -52,8 +68,23 @@ export default function Settings() {
 
   const handleSave = () => {
     const initials = form.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()
-    updateProfile({ ...form, initials, offer, want, offerLevels, wantLevels })
+    updateProfile({
+      ...form, initials, offer, want, offerLevels, wantLevels,
+      availability,
+      hoursPerWeek: hours === '' ? null : Number(hours),
+      avatarColor,
+    })
     setSaved(true)
+  }
+
+  const handlePassword = async () => {
+    if (pw.length < 6) { setPwMsg({ type: 'error', text: 'Password must be at least 6 characters.' }); return }
+    if (pw !== pw2)    { setPwMsg({ type: 'error', text: "Passwords don't match." }); return }
+    setPwBusy(true); setPwMsg(null)
+    const res = await changePassword(pw)
+    setPwBusy(false)
+    if (res?.error) setPwMsg({ type: 'error', text: res.error })
+    else { setPwMsg({ type: 'ok', text: 'Password updated ✓' }); setPw(''); setPw2('') }
   }
 
   return (
@@ -66,10 +97,10 @@ export default function Settings() {
         <div className="set-card">
           <div className="set-card-lbl">Profile</div>
           <div className="set-avatar-row">
-            <div className="set-avatar" style={{ background: currentUser.color }}>
+            <div className="set-avatar" style={{ background: avatarColor }}>
               {form.name.split(' ').map((n) => n[0]).slice(0, 2).join('').toUpperCase()}
             </div>
-            <div className="set-avatar-meta">{currentUser.location || 'Add your location'} · Joined {currentUser.joined}</div>
+            <div className="set-avatar-meta">{form.location || 'Add your location'} · Joined {currentUser.joined}</div>
           </div>
 
           <label className="set-label">Full name</label>
@@ -83,6 +114,39 @@ export default function Settings() {
 
           <label className="set-label">About</label>
           <textarea className="set-textarea" rows={4} value={form.bio} onChange={(e) => set('bio', e.target.value)} />
+
+          <label className="set-label">Availability</label>
+          <select className="set-input" value={availability} onChange={(e) => { setAvailability(e.target.value); setSaved(false) }}>
+            {AVAILABILITY.map((a) => <option key={a} value={a}>{a}</option>)}
+          </select>
+
+          <label className="set-label">Hours per week you can commit</label>
+          <input className="set-input" type="number" min="0" max="80" value={hours}
+            onChange={(e) => { setHours(e.target.value); setSaved(false) }} placeholder="e.g. 5" />
+
+          <label className="set-label">Avatar color</label>
+          <div className="set-swatches">
+            {COLORS.map((c) => (
+              <button
+                key={c}
+                type="button"
+                className={`set-swatch ${avatarColor.toLowerCase() === c.toLowerCase() ? 'active' : ''}`}
+                style={{ background: c }}
+                onClick={() => { setAvatarColor(c); setSaved(false) }}
+                aria-label={`Choose color ${c}`}
+              />
+            ))}
+          </div>
+          <div className="set-custom-row">
+            <input
+              type="color"
+              className="set-color-input"
+              value={avatarColor}
+              onChange={(e) => { setAvatarColor(e.target.value); setSaved(false) }}
+              aria-label="Custom avatar color"
+            />
+            <span className="set-custom-hint">Or pick any custom color</span>
+          </div>
         </div>
 
         <div className="set-card">
@@ -127,6 +191,33 @@ export default function Settings() {
               onKeyDown={(e) => e.key === 'Enter' && addSkill(newWant, setNewWant, want, setWant, wantLevels, setWantLevels, 'Any level')} />
             <button onClick={() => addSkill(newWant, setNewWant, want, setWant, wantLevels, setWantLevels, 'Any level')}>+ Add</button>
           </div>
+        </div>
+
+        <div className="set-card">
+          <div className="set-card-lbl">Account</div>
+          <p className="set-account-hint">Change the password you use to sign in.</p>
+          <div className="set-pw-grid">
+            <div className="set-pw-col">
+              <label className="set-label">New password</label>
+              <input className="set-input" type={showPw ? 'text' : 'password'} value={pw}
+                onChange={(e) => { setPw(e.target.value); setPwMsg(null) }} placeholder="At least 6 characters" />
+            </div>
+            <div className="set-pw-col">
+              <label className="set-label">Confirm password</label>
+              <input className="set-input" type={showPw ? 'text' : 'password'} value={pw2}
+                onChange={(e) => { setPw2(e.target.value); setPwMsg(null) }} placeholder="Re-enter password" />
+            </div>
+          </div>
+          <label className="set-pw-show">
+            <input type="checkbox" checked={showPw} onChange={(e) => setShowPw(e.target.checked)} />
+            Show password
+          </label>
+          {pwMsg && (
+            <div className={`set-msg ${pwMsg.type === 'error' ? 'set-msg-error' : 'set-msg-ok'}`}>{pwMsg.text}</div>
+          )}
+          <button className="set-pw-btn" onClick={handlePassword} disabled={pwBusy}>
+            {pwBusy ? 'Updating…' : 'Update password'}
+          </button>
         </div>
 
         <div className="set-actions">
