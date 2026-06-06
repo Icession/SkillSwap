@@ -2,7 +2,7 @@
 
 > Trade what you know for what you need — a platform where students exchange skills directly, with no money involved.
 
-**Live demo:** https://skill-swap-eight-eta.vercel.app
+**Live demo:** https://skill-swap-kl.vercel.app
 
 **Try it without signing up** — log in with:
 
