@@ -91,7 +91,7 @@ supabase/         # SQL: schema, migration, delete_user, reviews, swap_counts
 
 ## Design
 
-Designed in Figma before build: [view the design file](PASTE_YOUR_FIGMA_LINK_HERE)
+Designed in Figma before build: [view the design file](https://www.figma.com/design/SV4OVrVb3rdSOH5aYgqbJA/SkillSwap?m=auto&t=RelZaCJR3sFUbiGD-1E)
 
 ## Roadmap
 
